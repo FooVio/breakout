@@ -1,11 +1,15 @@
 import Phaser from 'phaser';
+
 import playerImg from '../../assets/player.png';
 import brickImg from '../../assets/brick.png';
 import ballImg from '../../assets/ball.png';
 
+import colorSchemes from '../colorSchemes';
+
 class Level extends Phaser.Scene {
   constructor() {
     super({ key: 'Level', active: true });
+    this.colors = Phaser.Math.RND.pick(colorSchemes);
   }
 
   preload() {
@@ -17,12 +21,14 @@ class Level extends Phaser.Scene {
   create() {
     this.player = this.physics.add.sprite(400, 550, 'player')
       .setCollideWorldBounds(true)
-      .setImmovable(true);
+      .setImmovable(true)
+      .setTint(this.colors.player);
 
     this.ball = this.physics.add.sprite(400, 250, 'ball')
       .setCollideWorldBounds(true)
       .setBounce(1)
-      .setVelocityY(300);
+      .setVelocityY(300)
+      .setTint(this.colors.ball);
 
     this.addBricks();
 
@@ -45,6 +51,12 @@ class Level extends Phaser.Scene {
       gridAlign: {
         width: w, height: h, cellWidth: 52, cellHeight: 27, x: 113, y: 100,
       },
+    });
+
+    this.bricks.children.each((brick, i) => {
+      const heightIndex = Math.floor(i / w);
+      const tint = this.colors.bricks - (heightIndex * 20);
+      brick.setTint(tint);
     });
 
     this.physics.add.collider(this.ball, this.bricks, Level.hitBrick);
