@@ -1,5 +1,8 @@
 import Phaser from 'phaser';
+
+import Boot from './scenes/boot';
 import Level from './scenes/level';
+import HUD from './scenes/hud';
 
 const config = {
   type: Phaser.AUTO,
@@ -10,8 +13,8 @@ const config = {
   physics: {
     default: 'arcade',
   },
-  scene: [Level],
+  scene: [Boot, Level, HUD],
 };
 
 const game = new Phaser.Game(config);
-game();
+// game();
