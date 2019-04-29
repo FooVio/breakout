@@ -6,12 +6,11 @@ import ballImg from '../../assets/ball.png';
 
 import colorSchemes from '../colorSchemes';
 
+const SCREEN_HEIGHT = 600;
+
 class Level extends Phaser.Scene {
   constructor() {
     super({ key: 'Level', active: true });
-    this.colors = Phaser.Math.RND.pick(colorSchemes);
-    this.bricksLeft = null;
-    this.level = -1;
   }
 
   preload() {
@@ -21,6 +20,15 @@ class Level extends Phaser.Scene {
   }
 
   create() {
+    this.colors = Phaser.Math.RND.pick(colorSchemes);
+
+    this.bricksLeft = null;
+    this.level = -1;
+    this.lives = 3;
+
+    // Disable Floor
+    this.physics.world.setBoundsCollision(true, true, true, false);
+
     this.player = this.physics.add.sprite(400, 550, 'player')
       .setCollideWorldBounds(true)
       .setImmovable(true)
@@ -31,6 +39,7 @@ class Level extends Phaser.Scene {
       .setBounce(1)
       .setTint(this.colors.ball);
 
+    this.events.emit('UPDATE_LIVES', this.lives);
     this.addBricks();
     this.nextLevel();
 
@@ -41,6 +50,10 @@ class Level extends Phaser.Scene {
     this.input.on('pointermove', (pointer) => {
       this.player.x = pointer.x;
     });
+
+    if (this.ball.y > SCREEN_HEIGHT) {
+      this.removeLife();
+    }
   }
 
   addBricks() {
@@ -67,19 +80,27 @@ class Level extends Phaser.Scene {
     this.events.emit('BRICKS_LEFT', this.bricksLeft);
   }
 
-  nextLevel() {
-    this.level += 1;
+  resetBall() {
     const speed = 300 + (this.level * 100);
-
     this.ball.setPosition(this.player.x, this.player.y - 25)
       .setVelocityY(speed);
+  }
 
+  nextLevel() {
+    this.level += 1;
+    this.resetBall();
     this.events.emit('UPDATE_LEVEL', this.level);
   }
 
-  static hitBall(player, ball) {
-    const diff = ball.x - player.x;
-    ball.setVelocityX(10 * diff);
+  removeLife() {
+    this.lives -= 1;
+    this.resetBall();
+    this.events.emit('UPDATE_LIVES', this.lives);
+
+    if (this.lives === 0) {
+      this.scene.pause();
+      this.events.emit('GAME_OVER', this.lives);
+    }
   }
 
   hitBrick(ball, brick) {
@@ -91,6 +112,11 @@ class Level extends Phaser.Scene {
       this.addBricks();
       this.nextLevel();
     }
+  }
+
+  static hitBall(player, ball) {
+    const diff = ball.x - player.x;
+    ball.setVelocityX(10 * diff);
   }
 }
 
