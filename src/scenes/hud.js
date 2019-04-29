@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 
 class HUD extends Phaser.Scene {
   constructor() {
-    super({ key: 'HUD', active: true });
+    super({ key: 'HUD', active: false });
   }
 
   create() {

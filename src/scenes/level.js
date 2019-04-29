@@ -10,7 +10,7 @@ const SCREEN_HEIGHT = 600;
 
 class Level extends Phaser.Scene {
   constructor() {
-    super({ key: 'Level', active: true });
+    super({ key: 'Level', active: false });
   }
 
   preload() {
