@@ -9,6 +9,8 @@ class HUD extends Phaser.Scene {
   }
 
   create() {
+    this.input.setDefaultCursor('none');
+
     this.bricksLeftText = this.add.text(100, 50, '', {
       fontSize: '32px',
       fontFamily: 'Audiowide',
@@ -52,6 +54,8 @@ class HUD extends Phaser.Scene {
       fontFamily: 'Audiowide',
       color: '#FFFFFF',
     }).setOrigin(0.5, 0.5);
+
+    this.input.setDefaultCursor('auto');
 
     this.input.once('pointerdown', () => {
       this.gameOverText.destroy();
