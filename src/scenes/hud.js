@@ -1,6 +1,3 @@
-// tiles left
-// setSpeed & level++
-// game over on hit bottom
 import Phaser from 'phaser';
 
 class HUD extends Phaser.Scene {
